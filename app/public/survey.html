@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Questions</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container" style="padding-top: 30px;">
+        <h2>Survey questions</h2>
+        <hr>
+        <h3>About You</h3>
+        <h4>Name (Required)</h4>
+        <input type="text" name="yourName" id="yourName" class="form-control">
+        <h4>Link to a photo image (Required)</h4>
+        <input type="text" name="yourPhoto" id="yourPhoto" class="form-control">
+        <hr>
+        <div class="questionsDiv"></div>
+        <hr>
+        <footer class="footer">
+            <div class="container">
+                <p><a href="/api/friends">API Friends List</a> | <a href="">GitHub Repo</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let questions = [
+            "Your mind is always buzzing with unexplored ideas and plans.",
+            "Generally speaking, you rely more on your experience than your imagination.",
+            "You find it easy to stay relaxed and focused even when there is some pressure.",
+            "You rarely do something just out of sheer curiosity.",
+            "You think that everyone’s views should be respected regardless of whether they are supported by facts or not.",
+            "You feel more energetic after spending time with a group of people."
+        ]
+        function runQuestions() {
+            let innerHtml = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                innerHtml += `
+                <h4 style="padding-top:10px">Question ${i+1}</h4>
+                <h5 class="questions">${questions[i]}</h5>
+                <select class="form-control answer" id="answer_${i}">
+                <option>Select an option ---</option>
+                <option value="1">1 (strongly disagree)</option>              
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5 (strongly agree)</option>
+                </select>
+            `;
+            }
+            $('.questionsDiv').append(innerHtml);
+            $('.questionsDiv').append('<button type="submit" id="submitBtn" class="btn btn-primary btn-lg btn-block" style="margin:20px 0px">Submit</button>');
+        }
+
+
+        $(document).ready(function () {
+            runQuestions();
+        });
+
+        $(document).on('click','#submitBtn', function(){
+            let name = $('#yourName').val().trim();
+            let photo = $('#yourPhoto').val().trim();
+            let answers = [];
+
+            $('.answer').each(function(){
+                answers.push($(this).val());
+            });
+
+            let newObj = {
+               name : name,
+               photo: photo,
+               answers : answers
+            }
+
+
+            $.post('./api/friends', newObj, function(data){
+                 console.log('here=' + data.name);
+            });
+
+        });
+
+
+
+    </script>
+</body>
+
+</html>
