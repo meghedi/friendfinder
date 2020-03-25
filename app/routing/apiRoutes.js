@@ -6,25 +6,23 @@ module.exports = function (app) {
     });
 
     app.post("/api/friends", function (req, res) {
-       let totalDifference = 0;
-       let minDifference = 10;
-       let bestMatchIdex = 0;
+        let totalDifference = 0;
+        let differenceArray = [];
+        let bestMatchIdex = 0;
         for (let i = 0; i < friendsData.length; i++) {
-            const element = friendsData[i];
-            for (let j = 0; j < element.answers.length; j++) {
-                const element2 = parseInt(element.answers[j]);
-                debugger;
-                if (req.body.answers[j] !== element2) {
-                    let differnce = Math.abs(req.body.answers[j] - element2);
-                    totalDifference +=differnce;
-                }
+            const eachFriend = friendsData[i];
+            for (let j = 0; j < eachFriend.answers.length; j++) {
+                const lastAnswer = parseInt(req.body.answers[j]);
+                const eachFriendAnswer = parseInt(eachFriend.answers[j]);
+                let differnce = Math.abs(lastAnswer - eachFriendAnswer);
+                totalDifference += differnce;
+                differenceArray.push(totalDifference);
             }
-
-            console.log(totalDifference);
-
-            if (totalDifference < minDifference){
-                bestMatchIdex  = i;
-                minDifference = totalDifference;
+           console.log(differenceArray);    
+            for (let index = 0; index < differenceArray.length; index++) {
+                if (differenceArray[index] <= differenceArray[bestMatchIdex]) {
+                    bestMatchIdex = index;
+                }
             }
         }
 
